@@ -1,0 +1,166 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+	return view('welcome');
+});
+
+Auth::routes();
+Route::match(['get', 'post'], 'register', function(){
+	return redirect('/');
+});
+
+Route::get('/', 'Auth\LoginController@ShowLoginForm');
+Route::group(['middleware' => 'auth'], function () {
+
+	Route::get('/home', 'HomeController@index')->name('home');
+
+// drivers
+	Route::get('/drivers-list', 'DriversController@index')->name('drivers_list');	
+
+// offices
+	Route::get('/offices-list', 'OfficesController@index')->name('offices_list');	
+
+// trucks
+	Route::get('/trucks-list', 'TrucksController@index')->name('trucks_list');
+
+// trucks weight category
+	Route::get('/trucks-weight-categories-list', 'TrucksWeightCategoriesController@index')->name('trucks_weight_categories_list');
+
+//documents
+	// route lists
+	Route::get('/route-list-add', 'RouteListsController@route_list_create')->name('route_list_create');
+	Route::post('/get-documents-to-append', 'DocumentsController@get_documents_to_append')->name('get_documents_to_append');
+	//multi-doc upload - ajax file upload
+	Route::post('/documents-multi-add', 'DocumentsController@multi_files_store')->name('multi_files_store');
+	Route::post('/document-remove', 'DocumentsController@remove_file')->name('remove_file');
+	//store route list with many documents attached
+	Route::post('/route-list-add', 'RouteListsController@route_list_store')->name('route_list_store');
+	
+	// list 
+	Route::get('/route-lists-list/{order}/{direction}', 'RouteListsController@index')->name('route_lists_list');
+	Route::post('/route-list-destroy/{id}', 'RouteListsController@destroy')->name('route_list_destroy');
+	Route::post('/route-list-edit/{id}', 'RouteListsController@edit')->name('route_list_edit');
+	Route::post('/route-list-update/{id}', 'RouteListsController@update')->name('route_list_update');	
+
+	//upload file spravka_prodajbi s dve m. ed.
+	Route::get('/bulk-add-sales-data', 'SalesDataController@index')->name('bulk_add_sales_data');
+	Route::post('/bulk-add-save-sales-data', 'SalesDataController@bulk_save_sales_data')->name('bulk_save_sales_data');
+	//uploaded filename list for delete
+	Route::get('/sales-data-file-list-init/{order}/{direction}', 'SalesDataController@sales_data_file_list_init')->name('sales_data_file_list_init');
+	Route::get('/sales-data-file-list/{order}/{direction}', 'SalesDataController@sales_data_file_list')->name('sales_data_file_list');
+	
+	//tovaritelnici
+	Route::get('/documents-list/{order}/{direction}', 'DocumentsController@index')->name('documents_list');
+	Route::get('/documents-add', 'DocumentsController@create')->name('documents_create');
+	Route::post('/documents-add', 'DocumentsController@store')->name('documents_store');
+	Route::post('/documents-edit/{id}', 'DocumentsController@update')->name('documents_update');
+	Route::post('/documents-destroy/{id}', 'DocumentsController@destroy')->name('documents_destroy');
+//data hand entering
+	Route::get('/data-hand-list/{order}/{direction}', 'DocumentsController@index_data_hand_list')->name('data_hand_list');	
+	Route::get('/data-hand-add', 'DocumentsController@create_data_by_hand')->name('create_data_by_hand');
+	Route::post('/data-hand-add', 'DocumentsController@store_handentered_data')->name('store_handentered_data');
+	Route::post('/data-hand-edit/{id}', 'DocumentsController@edit_handentered_data')->name('edit_handentered_data');
+	Route::post('/data-hand-update/{id}', 'DocumentsController@update_handentered_data')->name('update_handentered_data');
+	Route::post('/data-hand-destroy/{id}', 'DocumentsController@destroy_handentered_data')->name('destroy_handentered_data');
+
+//reports
+	// original
+	Route::get('/reports-original', 'ReportsController@original_index')->name('reports_original_init');
+	Route::get('/reports-original-view', 'ReportsController@original_view')->name('reports_original_view');
+	Route::get('/reports-original-export', 'ReportsController@export_original')->name('export_original');
+
+	// spravka/reference
+	Route::get('/reports-reference', 'ReportsController@spravka_index')->name('reports_spravka_init');
+	Route::get('/reports-reference-view', 'ReportsController@spravka_view')->name('reports_spravka_view');
+	Route::get('/reports-reference-export', 'ReportsController@export_spravka')->name('export_spravka');
+
+	// bez ime
+	Route::get('/reports-noname', 'ReportsController@noname_index')->name('reports_noname_init');
+	Route::get('/reports-noname-view', 'ReportsController@noname_view')->name('reports_noname_view');
+	Route::get('/reports-noname-export', 'ReportsController@export_noname')->name('export_noname');
+
+	//international
+	Route::get('/reports-international', 'ReportsController@international_index')->name('reports_international_init');
+	Route::get('/reports-international-view', 'ReportsController@international_view')->name('reports_international_view');
+	Route::get('/reports-international-export', 'ReportsController@export_international')->name('export_international');
+
+	//drivers to days
+	Route::get('/reports-drivers-to-days', 'ReportsController@drivers_to_days_index')->name('reports_drivers_to_days_init');
+	Route::get('/reports-drivers-to-days-view', 'ReportsController@drivers_to_days_view')->name('reports_drivers_to_days_view');
+	Route::get('/reports-drivers-to-days-export', 'ReportsController@export_drivers_to_days')->name('export_drivers_to_days');
+
+	//drivers for period
+	Route::get('/reports-drivers-for-period', 'ReportsController@drivers_for_period_index')->name('reports_drivers_for_period_init');
+	Route::get('/reports-drivers-for-period-view', 'ReportsController@drivers_for_period_view')->name('reports_drivers_for_period_view');
+	Route::get('/reports-drivers-for-period-export', 'ReportsController@export_drivers_for_period')->name('export_drivers_for_period');
+
+	//drivers province-drivers in sofia
+	Route::get('/reports-province-drivers-in-sofia', 'ReportsController@province_drivers_in_sofia_index')->name('reports_province_drivers_in_sofia_init');
+	Route::get('/reports-province-drivers-in-sofia-view', 'ReportsController@province_drivers_in_sofia_view')->name('reports_province_drivers_in_sofia_view');
+	Route::get('/reports-province-drivers-in-sofia-export', 'ReportsController@export_province_drivers_in_sofia')->name('export_province_drivers_in_sofia');
+
+	Route::group(['middleware' => 'admin'], function () {
+
+//users
+		Route::get('/users-list', 'UsersController@index')->name('users_list');
+		Route::get('/users-add', 'UsersController@create')->name('users_create');
+		Route::post('/users-add', 'UsersController@store')->name('users_store');
+		Route::get('/users-edit/{id}', 'UsersController@edit')->name('users_edit');
+		Route::post('/users-edit/{id}', 'UsersController@update')->name('users_update');
+		Route::post('/users-destroy/{id}', 'UsersController@destroy')->name('users_destroy');
+
+		// drivers
+	
+	Route::get('/drivers-add', 'DriversController@create')->name('drivers_create');
+	Route::post('/drivers-add', 'DriversController@store')->name('drivers_store');
+	Route::get('/drivers-edit/{id}', 'DriversController@edit')->name('drivers_edit');
+	Route::post('/drivers-edit/{id}', 'DriversController@update')->name('drivers_update');
+	Route::post('/drivers-destroy/{id}', 'DriversController@destroy')->name('drivers_destroy');
+	//driver status
+	Route::post('/drivers-change-status/{id}/{status}', 'DriversController@change_driver_status')->name('change_driver_status');
+	
+
+// offices
+	
+	Route::get('/offices-add', 'OfficesController@create')->name('offices_create');
+	Route::post('/offices-add', 'OfficesController@store')->name('offices_store');
+	Route::get('/offices-edit/{id}', 'OfficesController@edit')->name('offices_edit');
+	Route::post('/offices-edit/{id}', 'OfficesController@update')->name('offices_update');
+	Route::post('/offices-destroy/{id}', 'OfficesController@destroy')->name('offices_destroy');
+
+// trucks
+	
+	Route::get('/trucks-add', 'TrucksController@create')->name('trucks_create');
+	Route::post('/trucks-add', 'TrucksController@store')->name('trucks_store');
+	Route::get('/trucks-edit/{id}', 'TrucksController@edit')->name('trucks_edit');
+	Route::post('/trucks-edit/{id}', 'TrucksController@update')->name('trucks_update');
+	Route::post('/trucks-destroy/{id}', 'TrucksController@destroy')->name('trucks_destroy');
+	//driver status
+	Route::post('/trucks-change-status/{id}/{status}', 'TrucksController@change_truck_status')->name('change_truck_status');
+	
+
+// trucks weight category
+	
+	Route::get('/trucks-weight-category-add', 'TrucksWeightCategoriesController@create')->name('trucks_weight_category_create');
+	Route::post('/trucks-weight-category-add', 'TrucksWeightCategoriesController@store')->name('trucks_weight_category_store');
+	Route::get('/trucks-weight-category-edit/{id}', 'TrucksWeightCategoriesController@edit')->name('trucks_weight_category_edit');
+	Route::post('/trucks-weight-category-edit/{id}', 'TrucksWeightCategoriesController@update')->name('trucks_weight_category_update');
+	Route::post('/trucks-weight-category-destroy/{id}', 'TrucksWeightCategoriesController@destroy')->name('trucks_weight_category_destroy');
+
+//spravka dve m. ed
+	Route::post('/sales-data-destroy/{id}', 'SalesDataController@sales_data_destroy')->name('sales_data_destroy');
+
+	});
+
+});

@@ -1,0 +1,89 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+	return view('welcome');
+});
+
+Auth::routes();
+Route::match(['get', 'post'], 'register', function(){
+	return redirect('/');
+});
+
+Route::get('/', 'Auth\LoginController@ShowLoginForm');
+Route::group(['middleware' => 'auth'], function () {
+
+	Route::get('/home', 'HomeController@index')->name('home');
+
+// drivers
+	Route::get('/drivers-list', 'DriversController@index')->name('drivers_list');
+	Route::get('/drivers-add', 'DriversController@create')->name('drivers_create');
+	Route::post('/drivers-add', 'DriversController@store')->name('drivers_store');
+	Route::get('/drivers-edit/{id}', 'DriversController@edit')->name('drivers_edit');
+	Route::post('/drivers-edit/{id}', 'DriversController@update')->name('drivers_update');
+	Route::post('/drivers-destroy/{id}', 'DriversController@destroy')->name('drivers_destroy');
+
+// trucks
+	Route::get('/trucks-list', 'TrucksController@index')->name('trucks_list');
+	Route::get('/trucks-add', 'TrucksController@create')->name('trucks_create');
+	Route::post('/trucks-add', 'TrucksController@store')->name('trucks_store');
+	Route::get('/trucks-edit/{id}', 'TrucksController@edit')->name('trucks_edit');
+	Route::post('/trucks-edit/{id}', 'TrucksController@update')->name('trucks_update');
+	Route::post('/trucks-destroy/{id}', 'TrucksController@destroy')->name('trucks_destroy');
+
+//documents
+	Route::get('/documents-list/{order}/{direction}', 'DocumentsController@index')->name('documents_list');
+	Route::get('/documents-add', 'DocumentsController@create')->name('documents_create');
+	Route::post('/documents-add', 'DocumentsController@store')->name('documents_store');
+	Route::get('/documents-edit/{id}', 'DocumentsController@edit')->name('documents_edit');
+	Route::post('/documents-edit/{id}', 'DocumentsController@update')->name('documents_update');
+	Route::post('/documents-destroy/{id}', 'DocumentsController@destroy')->name('documents_destroy');
+//data hand entering
+	Route::get('/data-hand-add', 'DocumentsController@create_data_by_hand')->name('create_data_by_hand');
+	Route::post('/data-hand-add', 'DocumentsController@store_handentered_data')->name('store_handentered_data');
+	Route::get('/data-hand-edit/{id}', 'DocumentsController@edit_handentered_data')->name('edit_handentered_data');
+	Route::post('/data-hand-edit/{id}', 'DocumentsController@update_handentered_data')->name('update_handentered_data');
+	// Route::post('/documents-destroy/{id}', 'DocumentsController@destroy')->name('documents_destroy');
+
+//reports
+	// spravka/reference
+	Route::get('/reports-reference', 'ReportsController@reference_index')->name('reports_reference_init');
+	Route::get('/reports-reference-view', 'ReportsController@reference_view')->name('reports_reference_view');
+	Route::get('/reports-reference-export', 'ReportsController@export_reference')->name('export_reference');
+
+	// bez ime
+	Route::get('/reports-noname', 'ReportsController@noname_index')->name('reports_noname_init');
+	Route::get('/reports-noname-view', 'ReportsController@noname_view')->name('reports_noname_view');
+	Route::get('/reports-noname-export', 'ReportsController@export_noname')->name('export_noname');
+
+	//international
+	Route::get('/reports-international', 'ReportsController@international_index')->name('reports_international_init');
+	Route::get('/reports-international-view', 'ReportsController@international_view')->name('reports_international_view');
+	Route::get('/reports-international-export', 'ReportsController@export_international')->name('export_international');
+
+
+
+	Route::group(['middleware' => 'admin'], function () {
+
+//users
+		Route::get('/users-list', 'UsersController@index')->name('users_list');
+		Route::get('/users-add', 'UsersController@create')->name('users_create');
+		Route::post('/users-add', 'UsersController@store')->name('users_store');
+		Route::get('/users-edit/{id}', 'UsersController@edit')->name('users_edit');
+		Route::post('/users-edit/{id}', 'UsersController@update')->name('users_update');
+		Route::post('/users-destroy/{id}', 'UsersController@destroy')->name('users_destroy');
+
+
+	});
+
+});

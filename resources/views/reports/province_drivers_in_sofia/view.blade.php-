@@ -1,0 +1,150 @@
+@extends('layouts.master')
+@section('title', 'Справка - Шофьори, провинция - курсове в София')
+
+@section('content')
+<div class="row">
+	<div class="col-xs-12">		 
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Справка - "Шофьорир провинция - курсове в София"</h4>				
+			</div>        
+			<div class="card-body collapse in">
+				<div class="card-block card-dashboard">
+					<table class="table bordered">
+						@php 
+						$drivers = $data['province_drivers_in_sofia'];
+						$count = count($drivers);						
+						@endphp
+						@if($count > 0)
+							@for( $i = 0; $i < $count; $i+=3 )
+								<tr>
+								@if( isset($drivers[$i]) )								
+									<th>
+										{{ $drivers[$i]['general']['driver_name'] }}
+									</th>
+									<th>
+										тонаж
+									</th>
+									<th>
+										бр. заявки
+									</th>
+								@endif
+								@if( isset($drivers[$i+1]) )
+									<th>
+										{{ $drivers[$i+1]['general']['driver_name'] }}
+									</th>
+									<th>
+										тонаж
+									</th>
+									<th>
+										бр. заявки
+									</th>
+								@endif	
+								@if( isset($drivers[$i+2]) )
+									<th>
+										{{ $drivers[$i+2]['general']['driver_name'] }}
+									</th>
+									<th>
+										тонаж
+									</th>
+									<th>
+										бр. заявки
+									</th>
+								@endif	
+								</tr>
+								<!-- for j = 0; j= max_rows; j++ -->
+								<tr>
+								@if( isset($drivers[$i]) )
+									@foreach( $drivers[$i]['data_in_sofia_per_day'] as $data )									
+										<td> {{ $data->date_created }} </td>
+										<td> {{ $data->sum_total_weight }} </td>
+										<td> {{ $data->requests }} </td>		
+									@endforeach
+								@endif
+								@if( isset($drivers[$i+1]) )
+									@foreach( $drivers[$i+1]['data_in_sofia_per_day'] as $data )									
+										<td> {{ $data->date_created }} </td>
+										<td> {{ $data->sum_total_weight }} </td>
+										<td> {{ $data->requests }} </td>		
+									@endforeach
+								@endif
+								@if( isset($drivers[$i+2]) )
+									@foreach( $drivers[$i+2]['data_in_sofia_per_day'] as $data )									
+										<td> {{ $data->date_created }} </td>
+										<td> {{ $data->sum_total_weight }} </td>
+										<td> {{ $data->requests }} </td>		
+									@endforeach
+								@endif
+								</tr>
+								@if( isset($drivers[$i]) )
+								<tr>
+									<th>Общо</th>
+									<th>{{ $drivers[$i]['total'][0]->sum_total_weight}}</th>
+									<th>{{ $drivers[$i]['total'][0]->requests}}</th>								
+								</tr>
+								@endif
+								@endif
+								@if( isset($drivers[$i+1]) )
+								<tr>
+									<th>
+										{{ $drivers[$i+1]['general']['driver_name'] }}
+									</th>
+									<th>
+										тонаж
+									</th>
+									<th>
+										бр. заявки
+									</th>
+								</tr>							
+								@foreach( $drivers[$i+1]['data_in_sofia_per_day'] as $data )
+								<tr>
+									<td> {{ $data->date_created }} </td>
+									<td> {{ $data->sum_total_weight }} </td>
+									<td> {{ $data->requests }} </td>								
+								</tr>
+								@endforeach
+								<tr>
+									<th>Общо</th>
+									<th>{{ $drivers[$i+1]['total'][0]->sum_total_weight}}</th>
+									<th>{{ $drivers[$i+1]['total'][0]->requests}}</th>								
+								</tr>
+								@endif
+								@if( isset($drivers[$i+2]) )
+								<tr>
+									<th>
+										{{ $drivers[$i+2]['general']['driver_name'] }}
+									</th>
+									<th>
+										тонаж
+									</th>
+									<th>
+										бр. заявки
+									</th>
+								</tr>							
+								@foreach( $drivers[$i+2]['data_in_sofia_per_day'] as $data )
+								<tr>
+									<td> {{ $data->date_created }} </td>
+									<td> {{ $data->sum_total_weight }} </td>
+									<td> {{ $data->requests }} </td>								
+								</tr>
+								@endforeach
+								<tr>
+									<th>Общо</th>
+									<th>{{ $drivers[$i+2]['total'][0]->sum_total_weight}}</th>
+									<th>{{ $drivers[$i+2]['total'][0]->requests}}</th>								
+								</tr>
+								@endif
+							@endfor
+						@endif
+					</table>
+				</div>
+				<div class="card-block card-dashboard">
+					<a href="{{ route('export_province_drivers_in_sofia', ['date_range' => $date_range, 'office_ids'=>$offices]) }}" class="btn btn-info">Експортирай справката</a>
+					<a href="{{ route('reports_drivers_for_period_init') }}" class="btn btn-warning">Назад</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+@endsection
